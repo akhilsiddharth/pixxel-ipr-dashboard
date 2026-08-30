@@ -68,11 +68,12 @@
   .appendix .kicker{color:var(--muted)}
   .appendix .kicker::before{background:var(--muted)}
 
-  /* body holds everything between kicker and foot, and centres it
-     vertically so sparse slides don't leave a void at the bottom */
+  /* body holds everything between kicker and foot; top-aligned so the
+     kicker -> title -> first-content rhythm is identical on every slide.
+     flex:1 still pushes .foot to the baseline, slack pools above it. */
   .body{
     flex:1;min-height:0;display:flex;flex-direction:column;gap:26px;
-    justify-content:center;justify-content:safe center;
+    justify-content:flex-start;
   }
 
   h1{
@@ -135,8 +136,8 @@
 
   code{font-family:var(--font-mono);font-size:.88em;background:#eae5da;padding:2px 6px;border-radius:3px}
 
-  /* ---- compact treatment for the two densest slides (2, A1) ---- */
-  .slide.tight .body{gap:18px;justify-content:flex-start}
+  /* ---- compact treatment for the densest slides (2, 5, A1) ---- */
+  .slide.tight .body{gap:18px}
   .slide.tight h1{font-size:46px}
   .slide.tight li{font-size:20px;line-height:1.46}
   .slide.tight table{font-size:19px}
@@ -162,8 +163,9 @@
 
   /* ---- print: every slide, one per page ---- */
   @media print{
+    @page{size:1920px 1080px;margin:0}
     html,body{width:1920px;height:auto;overflow:visible;background:#fff}
-    .deck-viewport{position:static;overflow:visible}
+    .deck-viewport{position:static;overflow:visible;background:#fff}
     .deck-stage{position:static;width:auto;height:auto;transform:none!important;background:none}
     .slide{
       position:relative;inset:auto;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
