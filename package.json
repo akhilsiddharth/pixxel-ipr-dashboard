@@ -1,0 +1,24 @@
+{
+  "name": "pixxel-ipr-dashboard",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "IPR pipeline operational dashboard — 4 persona views, live-computed from the cleaned June 2026 order data.",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/papaparse": "^5.3.15",
+    "typescript": "^5.6.3",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  },
+  "dependencies": {
+    "papaparse": "^5.4.1"
+  }
+}

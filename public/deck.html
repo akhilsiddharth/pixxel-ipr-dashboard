@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>IPR Pipeline - Operational Health (June 2026)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@600;700;800&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ===========================================================
+     IPR PIPELINE DECK  -  single self-contained file
+     Open by double-click (file://). No server, no build.
+     Fixed 16:9 stage (1920x1080) scaled as a whole to the
+     viewport (frontend-slides convention). Slides toggle with
+     .active, never display:none. Content authored at 1920x1080.
+     Print emits every slide, one per page (PDF export intact).
+     =========================================================== */
+  :root{
+    --stage-bg:#0e0f12;
+    --paper:#f7f5f0;
+    --ink:#17191e;
+    --muted:#6a6f78;
+    --line:#d7d2c6;
+    --line-soft:#e7e3d9;
+    --fill:#efece4;
+    --accent:#d62828;
+    --accent-wash:#fbe9e7;
+    --good:#1c7c46;
+    --font-display:"Archivo","Helvetica Neue",Arial,sans-serif;
+    --font-text:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    --font-mono:"Space Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{width:100%;height:100%;overflow:hidden;background:var(--stage-bg)}
+  body{font-family:var(--font-text);color:var(--ink);-webkit-font-smoothing:antialiased}
+
+  /* ---- deck chrome (outside the slide design system) ---- */
+  .deck-viewport{position:fixed;inset:0;overflow:hidden;background:var(--stage-bg)}
+  .deck-stage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:0 0;background:var(--paper)}
+  .deck-progress{position:fixed;left:0;top:0;height:3px;width:100%;z-index:1000;background:rgba(255,255,255,.06)}
+  .deck-progress>i{display:block;height:100%;width:0;background:var(--accent);transition:width .45s ease}
+  .deck-hint{position:fixed;right:20px;bottom:15px;z-index:1000;font-family:var(--font-mono);font-size:11px;letter-spacing:.1em;
+             text-transform:uppercase;color:#7f858e;animation:hintfade .5s ease 6s forwards}
+  @keyframes hintfade{to{opacity:0;visibility:hidden}}
+
+  /* ---- slide ---- */
+  .slide{
+    position:absolute;inset:0;width:1920px;height:1080px;overflow:hidden;background:var(--paper);
+    display:flex;flex-direction:column;padding:84px 128px 74px;
+    visibility:hidden;opacity:0;pointer-events:none;transition:opacity .4s ease;
+  }
+  .slide.active{visibility:visible;opacity:1;pointer-events:auto}
+  .slide>*{position:relative;z-index:1}
+
+  .slidenum{
+    position:absolute;top:54px;right:118px;z-index:0;pointer-events:none;
+    font-family:var(--font-display);font-weight:800;font-size:168px;line-height:1;letter-spacing:-.04em;
+    color:transparent;-webkit-text-stroke:2px var(--line);
+  }
+  .appendix .slidenum{-webkit-text-stroke-color:var(--line-soft)}
+
+  .kicker{
+    font-size:15.5px;font-weight:700;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+    display:flex;align-items:center;gap:12px;margin-bottom:26px;
+  }
+  .kicker::before{content:"";width:11px;height:11px;background:var(--accent);flex:0 0 auto}
+  .appendix .kicker{color:var(--muted)}
+  .appendix .kicker::before{background:var(--muted)}
+
+  /* body holds everything between kicker and foot, and centres it
+     vertically so sparse slides don't leave a void at the bottom */
+  .body{
+    flex:1;min-height:0;display:flex;flex-direction:column;gap:26px;
+    justify-content:center;justify-content:safe center;
+  }
+
+  h1{
+    font-family:var(--font-display);font-weight:800;font-size:56px;line-height:1.12;letter-spacing:-.02em;
+    max-width:1520px;
+  }
+  h1 .sub{
+    display:block;font-family:var(--font-text);font-size:25px;font-weight:400;line-height:1.42;
+    color:var(--muted);letter-spacing:0;margin-top:16px;
+  }
+
+  ul{list-style:none;display:flex;flex-direction:column;gap:17px;max-width:1540px}
+  li{font-size:22px;line-height:1.52;padding-left:28px;position:relative}
+  li::before{content:"";position:absolute;left:0;top:13px;width:9px;height:9px;background:var(--accent)}
+  li.flat::before{background:var(--line)}
+  b{font-weight:700}
+  i{font-style:italic}
+
+  table{border-collapse:collapse;width:100%;max-width:1220px;margin:2px 0;font-size:20px}
+  th,td{padding:12px 18px;text-align:right;border-bottom:1px solid var(--line-soft)}
+  th:first-child,td:first-child{text-align:left}
+  thead th{
+    border-bottom:2px solid var(--ink);font-weight:700;font-size:13px;letter-spacing:.06em;
+    text-transform:uppercase;color:var(--muted)
+  }
+  tbody tr:last-child td{border-bottom:1px solid var(--line)}
+  tr.p0 td{background:var(--accent-wash);color:var(--accent);font-weight:700}
+  .num{font-variant-numeric:tabular-nums}
+
+  .cols{display:grid;grid-template-columns:1fr 1fr;gap:52px}
+  .cols ul{gap:15px}
+  .cols li{font-size:18.5px;line-height:1.46}
+
+  .lead{
+    font-size:24px;line-height:1.46;font-weight:500;
+    background:var(--fill);border-left:4px solid var(--ink);padding:20px 26px;max-width:1560px;
+  }
+  .lead.bad{background:var(--accent-wash);border-left-color:var(--accent)}
+
+  .caveat{
+    font-size:16.5px;line-height:1.5;color:var(--muted);
+    border-left:3px solid var(--line);background:var(--fill);padding:13px 18px;max-width:1560px
+  }
+  .caveat b{color:var(--ink)}
+
+  .foot{
+    margin-top:22px;padding-top:18px;border-top:1px solid var(--line);
+    font-family:var(--font-mono);font-size:13px;letter-spacing:.02em;color:var(--muted);
+    display:flex;justify-content:space-between;gap:24px
+  }
+
+  code{font-family:var(--font-mono);font-size:.88em;background:#eae5da;padding:2px 6px;border-radius:3px}
+
+  /* ---- compact treatment for the two densest slides (2, A1) ---- */
+  .slide.tight .body{gap:18px;justify-content:flex-start}
+  .slide.tight h1{font-size:46px}
+  .slide.tight li{font-size:20px;line-height:1.46}
+  .slide.tight table{font-size:19px}
+  .slide.tight th,.slide.tight td{padding:10px 16px}
+  .slide.tight .lead{font-size:21.5px;padding:16px 22px}
+  .slide.tight .caveat{font-size:15.5px;padding:11px 16px}
+
+  /* ---- staggered reveal on entry ---- */
+  .slide>.kicker,.slide>.body>*,.slide>.foot{
+    opacity:0;transform:translateY(14px);transition:opacity .5s ease,transform .5s ease
+  }
+  .slide.active>.kicker,.slide.active>.body>*,.slide.active>.foot{opacity:1;transform:none}
+  .slide.active>.body>*:nth-child(2){transition-delay:.05s}
+  .slide.active>.body>*:nth-child(3){transition-delay:.11s}
+  .slide.active>.body>*:nth-child(4){transition-delay:.17s}
+  .slide.active>.body>*:nth-child(5){transition-delay:.23s}
+  .slide.active>.foot{transition-delay:.28s}
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.15s!important}
+    .slide>.kicker,.slide>.body>*,.slide>.foot{transform:none}
+  }
+
+  /* ---- print: every slide, one per page ---- */
+  @media print{
+    html,body{width:1920px;height:auto;overflow:visible;background:#fff}
+    .deck-viewport{position:static;overflow:visible}
+    .deck-stage{position:static;width:auto;height:auto;transform:none!important;background:none}
+    .slide{
+      position:relative;inset:auto;visibility:visible!important;opacity:1!important;pointer-events:auto!important;
+      width:1920px;height:1080px;break-after:page;page-break-after:always
+    }
+    .slide>.kicker,.slide>.body>*,.slide>.foot{opacity:1!important;transform:none!important}
+    .slide:last-child{break-after:auto;page-break-after:auto}
+    .deck-progress,.deck-hint{display:none!important}
+  }
+</style>
+<noscript><style>
+  html,body{overflow:auto;height:auto}
+  .deck-viewport{position:static}
+  .deck-stage{position:static;width:auto;height:auto;transform:none!important;background:var(--stage-bg)}
+  .slide{position:relative;inset:auto;width:auto;max-width:1220px;height:auto;
+         margin:0 auto 22px;visibility:visible;opacity:1;pointer-events:auto}
+  .slide>.kicker,.slide>.body>*,.slide>.foot{opacity:1;transform:none}
+  .deck-progress,.deck-hint{display:none}
+</style></noscript>
+</head>
+<body>
+
+<div class="deck-progress"><i></i></div>
+
+<div class="deck-viewport">
+<div class="deck-stage">
+
+<!-- 1 -->
+<section class="slide">
+  <span class="slidenum" aria-hidden="true">01</span>
+  <span class="kicker">IPR Pipeline · Operational Health</span>
+  <div class="body">
+    <h1>IPR pipeline health - June 2026 sample
+      <span class="sub">Deliverable 1 - pipeline summary · Akhil Siddharth</span>
+    </h1>
+    <ul>
+      <li><b>95 image orders</b> in June (from 136 raw rows - collapsed to the latest valid attempt per Image ID). <b>89 processable</b>; 6 never captured, excluded from rates and reported separately.</li>
+      <li>9 customers · 3 satellites (FF01/02/03) · 5 bandsets · SLA tiers <b>8-48h</b> (present in the data - not assumed).</li>
+      <li>Throughput in this sample: <b>69% of processable orders delivered, 57% on time</b> (blended - the priority split matters more; next slide).</li>
+      <li>Acquisition and processing look healthy here (~95%+ pass-through, processing median ~5h). The issues show up after processing.</li>
+    </ul>
+    <p class="lead">Acquisition and processing look healthy in this sample. Work is accumulating after processing, around QC and delivery. Week 1 tells us whether that's a capacity limit or a gap in how completion is logged.</p>
+  </div>
+  <div class="foot"><span>Source: Raw_Data export · figures traced to <code>00-figures.md</code></span><span>1 / 5</span></div>
+</section>
+
+<!-- 2 -->
+<section class="slide tight">
+  <span class="slidenum" aria-hidden="true">02</span>
+  <span class="kicker">Complication 1</span>
+  <div class="body">
+    <h1>Work is accumulating between QC and delivery - and higher-priority orders are doing worse</h1>
+    <ul>
+      <li><b>All 22 in-flight orders are past QA-assignment.</b> The work in progress is entirely in the QC-to-delivery stretch.</li>
+      <li>A single QC review is <b>quick when it runs</b> (median 1.4h). So the issue looks like how the queue is ordered and how much it can clear - not how fast one review is. One reviewer, queue worked in arrival order.</li>
+      <li><b>20 stale orders</b> (no movement for more than 2× their SLA), the oldest at <b>685 hours (~28 days)</b> inside a 30-day window.</li>
+    </ul>
+    <table>
+      <thead><tr><th>Priority</th><th>Orders</th><th>Delivered</th><th>On-time</th><th>On-time % of orders</th></tr></thead>
+      <tbody>
+        <tr class="p0"><td>P0</td><td class="num">11</td><td class="num">5</td><td class="num">0</td><td class="num">0%</td></tr>
+        <tr><td>P1</td><td class="num">21</td><td class="num">14</td><td class="num">12</td><td class="num">57%</td></tr>
+        <tr><td>P2</td><td class="num">15</td><td class="num">10</td><td class="num">7</td><td class="num">47%</td></tr>
+        <tr><td>Standard</td><td class="num">35</td><td class="num">25</td><td class="num">25</td><td class="num">71%</td></tr>
+        <tr><td>No tag</td><td class="num">7</td><td class="num">7</td><td class="num">7</td><td class="num">100%</td></tr>
+      </tbody>
+    </table>
+    <p class="lead bad"><b>Standard-priority orders are being delivered on time; the highest-priority (P0) orders are not.</b> None of the 11 P0 orders were delivered on time, and 6 were not delivered at all.</p>
+    <div class="caveat"><b>Tested in week 1:</b> only 15 of 61 delivered orders have a clean QA-assigned &rarr; upload duration, so part of the apparent QC backlog could be missing completion timestamps rather than a real capacity limit. Week-1 reconciliation (plan A3) tells us which - and shifts the week-2 fix if it's a logging gap.</div>
+  </div>
+  <div class="foot"><span>WIP position, stage cycle-times, priority split</span><span>2 / 5</span></div>
+</section>
+
+<!-- 3 -->
+<section class="slide">
+  <span class="slidenum" aria-hidden="true">03</span>
+  <span class="kicker">Complication 2</span>
+  <div class="body">
+    <h1>The "delivered" status is not reliable</h1>
+    <ul>
+      <li><b>33 orders (35% of 95) carry contradictory success labels</b> - two distinct problem types, two different fixes:</li>
+      <li class="flat"><b>Delivery-signal mismatch - 18</b> (system-of-record reconciliation): uploaded but status &ne; Delivered (8) · marked Delivered, no upload timestamp (8) · both + low-SNR (2). &rarr; nightly reconciliation job.</li>
+      <li class="flat"><b>Outcome-classification ambiguity - 15</b> (business rule / semantic): "low SNR but accepted" shipped with no customer flag (13) · QC Pass but processing failed (2). &rarr; written "good enough" bar + an explicit accepted-with-caveat status.</li>
+      <li class="flat">Separately: ~35 orders uploaded but customer-visible status never refreshed - benign stale-write, same job clears it.</li>
+    </ul>
+    <p class="lead bad">Customer Success is working from status that is sometimes ahead of reality and sometimes behind it. Until the signal is reliable, the other metrics and customer updates can't be fully trusted either.</p>
+  </div>
+  <div class="foot"><span>Making "delivered" mean one thing is a prerequisite, not a nice-to-have</span><span>3 / 5</span></div>
+</section>
+
+<!-- 4 -->
+<section class="slide">
+  <span class="slidenum" aria-hidden="true">04</span>
+  <span class="kicker">Root-cause signals</span>
+  <div class="body">
+    <h1>What's driving the QC load - and what isn't</h1>
+    <div class="cols">
+      <ul>
+        <li><b>Reprocessing is high and rising:</b> 29% of orders (26/89), running 33-36% in late June. But <b>19 of 26 reprocessed orders had already passed QC on the first attempt</b> - so most of this rework isn't triggered by a failed check. It looks discretionary, and the reason isn't recorded.</li>
+        <li><b>FF02 stands out</b> (small sample - worth checking, not concluding): lowest on-time rate (48% of orders vs FF03's 68%), and about twice the fleet rate of band-to-band registration errors (BBR - bands not lining up in the image: 24% vs 10-12%). Could be a calibration or sensor issue; needs the satellite team to confirm.</li>
+        <li><b>Vegetation bandset:</b> 55% delivered, and it's the largest product line (n=33).</li>
+      </ul>
+      <ul>
+        <li class="flat"><b>Checked and set aside:</b> viewing angle (BBR orders average 11.0° off-nadir vs 11.4° fleet-wide) and light level (no clear pattern). The banding tracks with the number of bands and with FF02, not with geometry or lighting.</li>
+        <li class="flat"><b>Cloud is not the issue here:</b> exactly 1 order is flagged Cloudy in the whole sample (36 partly cloudy, 57 clear). A plan built around cloud handling wouldn't address the actual problem.</li>
+        <li class="flat"><b>Processing failures:</b> 6 of 89 - low. Not where orders are being lost.</li>
+      </ul>
+    </div>
+    <p class="lead">The QC queue is being loaded with rework that may be avoidable. Reducing the load means both clearing the current queue and understanding why the reprocessing is happening.</p>
+  </div>
+  <div class="foot"><span>13 BBR orders - every sub-group figure here is directional, to investigate not conclude</span><span>4 / 5</span></div>
+</section>
+
+<!-- 5 -->
+<section class="slide">
+  <span class="slidenum" aria-hidden="true">05</span>
+  <span class="kicker">Resolution</span>
+  <div class="body">
+    <h1>2-week plan - 2 engineers + 1 QA/QC
+      <span class="sub">Fixed team, scope cut to fit. Each action either helps the QC queue clear, adds capacity to it, or reduces what's sent into it.</span>
+    </h1>
+    <ul>
+      <li><b>1 · Fix the QC queue order</b> - <b>P0 first</b>, then by <b>SLA slack</b> (<code>deadline - now - expected work left</code>) for the rest, instead of arrival order - so an order gets attention <i>before</i> it misses its deadline - plus a QA push to clear the stale P0/P1 backlog, oldest first.</li>
+      <li><b>2 · Make "delivered" reliable</b> - one nightly job that flags every order where the upload timestamp, the customer-facing status and the QC status disagree.</li>
+      <li><b>3 · Automate the mechanical QC checks</b> (geometry, radiometry, band alignment, completeness) so the reviewer only handles the judgement calls, not every scene.</li>
+      <li><b>4 · Reduce avoidable reprocessing</b> - a rule for when reprocessing is allowed, with the reason logged - plus a short, timeboxed look at the FF02 / Vegetation banding signal.</li>
+    </ul>
+    <p class="lead">Day-14 readout: existing stale P0s <b>delivered</b> · <b>new</b> P0/P1 on-time <b>&ge;80%</b> · oldest in QC <b>685h &rarr; &lt;48h</b> · stale <b>20 &rarr; &lt;5</b> · signal-mismatch <b>18 &rarr; &le;3</b> · every new P0/P1 reaches QA with <b>slack &gt; 0</b>.</p>
+  </div>
+  <div class="foot"><span>Full plan with hypothesis / metric / guardrail / rollback per action - deliverable 4</span><span>5 / 5</span></div>
+</section>
+
+<!-- Appendix A -->
+<section class="slide appendix tight">
+  <span class="slidenum" aria-hidden="true">A1</span>
+  <span class="kicker">Appendix · Queue-ranking rule (deliverable 4)</span>
+  <div class="body">
+    <h1>SLA slack - how the QC queue is ordered</h1>
+    <ul>
+      <li><b>1 · P0 first, always</b> - a P0 order jumps every lower tier regardless of slack (contractual / relationship tier).</li>
+      <li><b>2 · Below P0, ascending SLA slack</b> across P1 / P2 / Standard:</li>
+      <li class="flat"><code>projected_slack_h = delivery_deadline - now - expected_remaining_h</code></li>
+      <li class="flat"><code>expected_remaining_h = &Sigma; p80 duration of the stages this order has not yet cleared</code></li>
+      <li><b>Bands:</b> <code>slack &le; 0</code> breaches at normal pace · <code>0-6h</code> at risk · <code>&gt;6h</code> safe. The queue re-ranks every morning off this - runs off timestamps already in the export, no new instrumentation.</li>
+    </ul>
+    <table>
+      <thead><tr><th>Stage still ahead of the order</th><th>p50 h</th><th>p80 h (used)</th></tr></thead>
+      <tbody>
+        <tr><td>Processing queue (acq &rarr; trigger)</td><td class="num">5.1</td><td class="num">16.0</td></tr>
+        <tr><td>Processing (trigger &rarr; end)</td><td class="num">5.0</td><td class="num">7.2</td></tr>
+        <tr><td>QC queue (end &rarr; QA assigned)</td><td class="num">3.4</td><td class="num">5.2</td></tr>
+        <tr><td>Manual QC (QA assigned &rarr; upload)</td><td class="num">1.4</td><td class="num">2.3</td></tr>
+      </tbody>
+    </table>
+    <p class="lead">At p80 pace, end to end is about 31h - so every order on the 8/12/16/24h tiers (51 of 95; 47 of 89 processable) starts with negative slack. That points at pricing and roadmap questions, not only operations.</p>
+  </div>
+  <div class="foot"><span>Daily metric #2 is QC backlog / WIP age - this is the queue mechanism, not a metric</span><span>A1</span></div>
+</section>
+
+<!-- Appendix B -->
+<section class="slide appendix">
+  <span class="slidenum" aria-hidden="true">A2</span>
+  <span class="kicker">Appendix · Data cleaning</span>
+  <div class="body">
+    <h1>How the data was cleaned</h1>
+    <ul>
+      <li><b>Collapsed to one row per Image ID</b> - latest valid attempt (max Processing Attempt, tie-break latest timestamp). 41 duplicate / retry rows removed &rarr; 95 orders.</li>
+      <li><b>Normalised statuses</b> - Cloud (8&rarr;4), Manual QC (13&rarr;7), Processing Status (17&rarr;7), Bandset (8&rarr;5), Priority (7&rarr;4), plus Is-Reprocess and Strip Fulfillment.</li>
+      <li><b>Timestamps</b> - parsed two date formats; 4 unparseable, 89 null cells across 5 time fields (DataHub Upload null on 53/136). QA-assigned timestamps are internally inconsistent for delivered orders - turnaround splits rest on 15 clean cases.</li>
+      <li><b>Separated processable vs non-processable</b> - 6 "never captured" orders excluded from failure / yield metrics, reported on their own.</li>
+      <li><b>Cloud-cover %</b> - 1 negative value and 2 non-numeric values nulled. <b>No order excluded for cloud</b> - exactly 1 order is <code>Cloud Status = Cloudy</code>; it is flagged, not removed.</li>
+      <li><b>Export cutoff</b> inferred as the max observed timestamp (2026-06-30 10:43); "stale" = idle &gt; 2× SLA hours (threshold chosen, sensitivity not tested).</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Full decisions log: <code>data/NOTES.md</code> · <code>shared/clean.py</code></span><span>A2</span></div>
+</section>
+
+</div><!-- /deck-stage -->
+</div><!-- /deck-viewport -->
+
+<div class="deck-hint">&larr; &rarr; or click to navigate</div>
+
+<script>
+(function(){
+  var stage  = document.querySelector('.deck-stage');
+  var vp     = document.querySelector('.deck-viewport');
+  var bar    = document.querySelector('.deck-progress > i');
+  var slides = Array.prototype.slice.call(document.querySelectorAll('.slide'));
+  var idx = 0;
+
+  function fit(){
+    var s = Math.min(window.innerWidth / 1920, window.innerHeight / 1080);
+    var x = (window.innerWidth  - 1920 * s) / 2;
+    var y = (window.innerHeight - 1080 * s) / 2;
+    stage.style.transform = 'translate(' + x + 'px,' + y + 'px) scale(' + s + ')';
+  }
+
+  function show(n, skipHash){
+    idx = Math.max(0, Math.min(slides.length - 1, n));
+    for (var i = 0; i < slides.length; i++) slides[i].classList.toggle('active', i === idx);
+    bar.style.width = ((idx + 1) / slides.length * 100) + '%';
+    if (!skipHash) history.replaceState(null, '', '#' + (idx + 1));
+  }
+  function next(){ show(idx + 1); }
+  function prev(){ show(idx - 1); }
+
+  window.addEventListener('resize', fit);
+
+  document.addEventListener('keydown', function(e){
+    if (e.key === 'ArrowRight' || e.key === 'PageDown' || e.key === ' ') { e.preventDefault(); next(); }
+    else if (e.key === 'ArrowLeft' || e.key === 'PageUp') { e.preventDefault(); prev(); }
+    else if (e.key === 'Home') { e.preventDefault(); show(0); }
+    else if (e.key === 'End')  { e.preventDefault(); show(slides.length - 1); }
+  });
+
+  vp.addEventListener('click', function(e){
+    if (e.target.closest('a')) return;                                // let links work
+    if (window.getSelection && String(window.getSelection())) return; // let text be selected
+    if (e.clientX < window.innerWidth * 0.28) prev(); else next();
+  });
+
+  var x0 = null;
+  vp.addEventListener('touchstart', function(e){ x0 = e.changedTouches[0].clientX; }, { passive:true });
+  vp.addEventListener('touchend', function(e){
+    if (x0 == null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 50) { dx < 0 ? next() : prev(); }
+    x0 = null;
+  }, { passive:true });
+
+  var start = parseInt((location.hash || '').replace('#', ''), 10);
+  fit();
+  show(isNaN(start) ? 0 : start - 1, true);
+})();
+</script>
+
+</body>
+</html>
