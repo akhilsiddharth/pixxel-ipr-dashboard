@@ -19,10 +19,10 @@ import { renderLead } from "./views/lead";
 import { renderQaQc } from "./views/qaqc";
 
 const VIEWS: { id: ViewId; label: string; title: string; render: (o: Order[], c: ViewCtx) => string }[] = [
-  { id: "lead", label: "Lead", title: "What needs a decision today", render: renderLead },
-  { id: "qaqc", label: "Quality", title: "The queue, in the order to work it", render: renderQaQc },
+  { id: "lead", label: "IPR Lead", title: "What needs a decision today", render: renderLead },
+  { id: "qaqc", label: "QC", title: "The queue, in the order to work it", render: renderQaQc },
   { id: "eng", label: "Engineering", title: "Where the pipeline is losing time", render: renderEng },
-  { id: "cs", label: "Customers", title: "Who to call before they call you", render: renderCs },
+  { id: "cs", label: "Customer Success", title: "Who to call before they call you", render: renderCs },
 ];
 
 const RANGE_LABEL: Record<RangeId, string> = {
