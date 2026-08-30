@@ -319,8 +319,8 @@ export function dataTable(
   const gridVar = `--tgrid:${template}`;
   const head = cols
     .map((c) => {
-      const active = sort && sort.key === c.key;
-      const arrow = active ? (sort.dir > 0 ? " ↑" : " ↓") : "";
+      const active = !!c.sortable && !!sort && sort.key === c.key;
+      const arrow = active ? (sort!.dir > 0 ? " ↑" : " ↓") : "";
       const attrs = c.sortable ? ` role="button" tabindex="0" data-sort="${esc(c.key)}"` : "";
       return `<div class="th al-${c.align ?? "left"}${active ? " on" : ""}${
         c.sortable ? " sortable" : ""

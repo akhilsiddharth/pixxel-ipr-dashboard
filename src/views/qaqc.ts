@@ -103,7 +103,7 @@ export function renderQaQc(orders: Order[], ctx: ViewCtx): string {
     },
     body: dataTable(
       [
-        { key: "rank", label: "#", align: "left", width: "24px" },
+        { key: "rank", label: "#", align: "left", width: "30px" },
         { key: "slack", label: "time left", align: "right", sortable: true, width: "72px" },
         { key: "pri", label: "pri", align: "left", sortable: true, width: "40px" },
         { key: "id", label: "order", align: "left", sortable: true, grow: true },

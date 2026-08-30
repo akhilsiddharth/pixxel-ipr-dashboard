@@ -662,7 +662,7 @@ code {
   align-items: flex-start;
 }
 .brow {
-  grid-template-columns: minmax(0, 1fr) minmax(60px, 1fr) 44px;
+  grid-template-columns: 148px minmax(60px, 1fr) 44px;
 }
 .erow.hit,
 .drow.hit,
@@ -797,6 +797,11 @@ code {
 }
 .tr.t-bad {
   box-shadow: inset 2px 0 0 var(--bad);
+}
+/* keep the first cell clear of the P0 edge marker */
+.thead > :first-child,
+.tr > :first-child {
+  padding-left: 8px;
 }
 .td {
   font-size: 12px;
