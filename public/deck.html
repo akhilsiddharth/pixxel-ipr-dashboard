@@ -91,6 +91,15 @@
   b{font-weight:700}
   i{font-style:italic}
 
+  /* phase divider (slide 5) */
+  .phase{
+    font-family:var(--font-mono);font-size:13px;font-weight:700;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:14px;
+  }
+  .phase::after{content:"";flex:1;height:1px;background:var(--line)}
+  .phase.two{color:var(--muted)}
+  .slide.tight .phase{font-size:12px}
+
   table{border-collapse:collapse;width:100%;max-width:1220px;margin:2px 0;font-size:20px}
   th,td{padding:12px 18px;text-align:right;border-bottom:1px solid var(--line-soft)}
   th:first-child,td:first-child{text-align:left}
@@ -193,10 +202,10 @@
     <ul>
       <li><b>95 image orders</b> in June (from 136 raw rows - collapsed to the latest valid attempt per Image ID). <b>89 processable</b>; 6 never captured, excluded from rates and reported separately.</li>
       <li>9 customers · 3 satellites (FF01/02/03) · 5 bandsets · SLA tiers <b>8-48h</b> (present in the data - not assumed).</li>
-      <li>Throughput in this sample: <b>69% of processable orders delivered, 57% on time</b> (blended - the priority split matters more; next slide).</li>
+      <li>Delivery rate in this sample: <b>69% of processable orders delivered, 57% on time</b> (blended - the priority split matters more; next slide).</li>
       <li>Acquisition and processing look healthy here (~95%+ pass-through, processing median ~5h). The issues show up after processing.</li>
     </ul>
-    <p class="lead">Acquisition and processing look healthy in this sample. Work is accumulating after processing, around QC and delivery. Week 1 tells us whether that's a capacity limit or a gap in how completion is logged.</p>
+    <p class="lead">Acquisition and processing look healthy in this sample. Work is accumulating after processing, around QC and delivery. The first week of the 2-week plan reconciles the timestamps to separate a real capacity limit from a completion-logging gap.</p>
   </div>
   <div class="foot"><span>Source: Raw_Data export · figures traced to <code>00-figures.md</code></span><span>1 / 5</span></div>
 </section>
@@ -223,7 +232,7 @@
       </tbody>
     </table>
     <p class="lead bad"><b>Standard-priority orders are being delivered on time; the highest-priority (P0) orders are not.</b> None of the 11 P0 orders were delivered on time, and 6 were not delivered at all.</p>
-    <div class="caveat"><b>Tested in week 1:</b> only 15 of 61 delivered orders have a clean QA-assigned &rarr; upload duration, so part of the apparent QC backlog could be missing completion timestamps rather than a real capacity limit. Week-1 reconciliation (plan A3) tells us which - and shifts the week-2 fix if it's a logging gap.</div>
+    <div class="caveat"><b>Week 1 check:</b> only 15 of 61 delivered orders have a clean QA-assigned &rarr; upload duration, so part of the apparent QC backlog could be missing completion timestamps rather than a real capacity limit. The reconciliation tells us which, and changes the Week 2 response if it's a logging gap.</div>
   </div>
   <div class="foot"><span>WIP position, stage cycle-times, priority split</span><span>2 / 5</span></div>
 </section>
@@ -238,9 +247,9 @@
       <li><b>33 orders (35% of 95) carry contradictory success labels</b> - two distinct problem types, two different fixes:</li>
       <li class="flat"><b>Delivery-signal mismatch - 18</b> (system-of-record reconciliation): uploaded but status &ne; Delivered (8) · marked Delivered, no upload timestamp (8) · both + low-SNR (2). &rarr; nightly reconciliation job.</li>
       <li class="flat"><b>Outcome-classification ambiguity - 15</b> (business rule / semantic): "low SNR but accepted" shipped with no customer flag (13) · QC Pass but processing failed (2). &rarr; written "good enough" bar + an explicit accepted-with-caveat status.</li>
-      <li class="flat">Separately: ~35 orders uploaded but customer-visible status never refreshed - benign stale-write, same job clears it.</li>
+      <li class="flat">Separately: ~35 orders uploaded but customer-visible status never refreshed - appears to be a stale status write; the same job clears it.</li>
     </ul>
-    <p class="lead bad">Customer Success is working from status that is sometimes ahead of reality and sometimes behind it. Until the signal is reliable, the other metrics and customer updates can't be fully trusted either.</p>
+    <p class="lead bad">Customer Success is working from status that is sometimes ahead of reality and sometimes behind it. Until the signal is reliable, the metrics built on it - delivered %, on-time %, and per-customer delivery - carry the same 33-order uncertainty, and so do the customer updates driven from that status.</p>
   </div>
   <div class="foot"><span>Making "delivered" mean one thing is a prerequisite, not a nice-to-have</span><span>3 / 5</span></div>
 </section>
@@ -253,7 +262,7 @@
     <h1>What's driving the QC load - and what isn't</h1>
     <div class="cols">
       <ul>
-        <li><b>Reprocessing is high and rising:</b> 29% of orders (26/89), running 33-36% in late June. But <b>19 of 26 reprocessed orders had already passed QC on the first attempt</b> - so most of this rework isn't triggered by a failed check. It looks discretionary, and the reason isn't recorded.</li>
+        <li><b>Reprocessing is high and rising:</b> 29% of orders (26/89), running 33-36% in late June. The evidence: <b>19 of 26 reprocessed orders had already passed QC on the first attempt</b>, and the reprocess rows carry no reason code. So most of this rework was not triggered by a failed check - but whether it is discretionary or driven by something the export does not capture cannot be told from the data. Week 2 logs the reason to resolve it.</li>
         <li><b>FF02 stands out</b> (small sample - worth checking, not concluding): lowest on-time rate (48% of orders vs FF03's 68%), and about twice the fleet rate of band-to-band registration errors (BBR - bands not lining up in the image: 24% vs 10-12%). Could be a calibration or sensor issue; needs the satellite team to confirm.</li>
         <li><b>Vegetation bandset:</b> 55% delivered, and it's the largest product line (n=33).</li>
       </ul>
@@ -269,16 +278,20 @@
 </section>
 
 <!-- 5 -->
-<section class="slide">
+<section class="slide tight">
   <span class="slidenum" aria-hidden="true">05</span>
   <span class="kicker">Resolution</span>
   <div class="body">
     <h1>2-week plan - 2 engineers + 1 QA/QC
       <span class="sub">Fixed team, scope cut to fit. Each action either helps the QC queue clear, adds capacity to it, or reduces what's sent into it.</span>
     </h1>
+    <div class="phase">Week 1 · clear and stabilise the queue</div>
     <ul>
       <li><b>1 · Fix the QC queue order</b> - <b>P0 first</b>, then by <b>SLA slack</b> (<code>deadline - now - expected work left</code>) for the rest, instead of arrival order - so an order gets attention <i>before</i> it misses its deadline - plus a QA push to clear the stale P0/P1 backlog, oldest first.</li>
       <li><b>2 · Make "delivered" reliable</b> - one nightly job that flags every order where the upload timestamp, the customer-facing status and the QC status disagree.</li>
+    </ul>
+    <div class="phase two">Week 2 · reduce what enters the queue</div>
+    <ul>
       <li><b>3 · Automate the mechanical QC checks</b> (geometry, radiometry, band alignment, completeness) so the reviewer only handles the judgement calls, not every scene.</li>
       <li><b>4 · Reduce avoidable reprocessing</b> - a rule for when reprocessing is allowed, with the reason logged - plus a short, timeboxed look at the FF02 / Vegetation banding signal.</li>
     </ul>
@@ -309,7 +322,7 @@
         <tr><td>Manual QC (QA assigned &rarr; upload)</td><td class="num">1.4</td><td class="num">2.3</td></tr>
       </tbody>
     </table>
-    <p class="lead">At p80 pace, end to end is about 31h - so every order on the 8/12/16/24h tiers (51 of 95; 47 of 89 processable) starts with negative slack. That points at pricing and roadmap questions, not only operations.</p>
+    <p class="lead">At p80 pace, end to end is about 31h - so every order on the 8/12/16/24h tiers (51 of 95; 47 of 89 processable) starts with negative slack. The current SLA tiers are not achievable at today's stage times: either the committed tiers move, or the stage times have to come down.</p>
   </div>
   <div class="foot"><span>Daily metric #2 is QC backlog / WIP age - this is the queue mechanism, not a metric</span><span>A1</span></div>
 </section>
